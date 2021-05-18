@@ -5,25 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
-use App\Task;
+use App\Models\Task;
 
 class TaskController extends Controller
 {
     public function index(){
-        $tasks = Task::where("iscompleted", false)->orderBy("id", "DEC")->get();
+        $tasks = Task::where("iscompleted", false)->orderBy("id", "desc")->get();
         $completed_tasks = Task::where("iscompleted", true)->get();
-        return view("welcome", compact("tasks", "completed_tasks"));
+        return view("todo", compact("tasks", "completed_tasks"));
         //compact helps pass the variables to the welcome view
     }
 
     public function store(Request $request)
     {
-        $input = $request->all();
-        $task = new Task();
-        $task->task = request("task");
-        $task->details = request("details");
-        $task->iscompleted=false;
-        $task->save();
+        Task::create([
+            'title'=>$request->title,
+            'details'=>$request->details
+        ]);
         return Redirect::back()->with("message", "Task has been added");
     }
 
